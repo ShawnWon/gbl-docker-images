@@ -1,0 +1,30 @@
+services:
+  solr:
+    image: my-solr:latest
+    ports:
+      - "8983:8983"
+    volumes:
+      - ./solr_data:/var/solr/data
+#      - ./solr/conf:/opt/solr/conf
+#    entrypoint:
+#      - bash
+#      - -c
+#      - |
+#        /opt/solr/bin/solr start -force;
+#        precreate-core blacklight-core /opt/solr/conf;
+    networks:
+      - solrnet
+  geoblacklight:
+    image: my-app:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - solr
+    environment:
+      SOLR_URL: http://solr:8983/solr/blacklight-core
+    networks:
+      - solrnet
+
+networks:
+  solrnet:
+
